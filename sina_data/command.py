@@ -6,6 +6,16 @@ import pandas as pd
 import os
 import logger
 
+
+#  ensure_tick    # 按tick文件更新索引
+#  update_index   # 更新索引日期
+#  emend_db       # 按数据库更新索引
+#  write_db       # 根据索引写数据库
+#  req_tick_data  # 根据索引向MQ提交数据下载任务
+#  ensure_index   # 按tick和数据库更新索引
+#  download_tick  # 监听MQ下载tick数据
+
+
 try:
     root = os.environ.get("SINADATA")
     fm = FileManger(root)
@@ -20,6 +30,16 @@ def write_db():
     import index_db
 
     index_db.write_db(fm, handler, logger.get_time_rotate("WriteDBLog"))
+
+
+def download_tick():
+    import save_tick
+    from worker import Consumer, TornadoWorker
+    import MQconfig
+
+    TornadoWorker.params(
+        Consumer(save_tick.callback, MQconfig.queue, MQconfig.consume)
+    ).start()
 
 
 def emend_db(include_2=False):
@@ -70,14 +90,6 @@ def req_tick_data():
 def ensure_index(include_2=False):
     ensure_tick()
     emend_db(include_2)
-
-
-commands = {"ensure_tick": ensure_tick,  # 按tick文件更新索引
-            "update_index": update_index,  # 更新索引日期
-            "emend_db": emend_db,  # 按数据库更新索引
-            "write_db": write_db,  # 根据索引写数据库
-            "req_tick_data": req_tick_data,  # 根据索引向MQ提交数据下载任务
-            "ensure_index": ensure_index}  # 按tick和数据库更新索引
 
 
 import click
@@ -152,6 +164,11 @@ def create(path, start, end, stock_index):
                 print "create index {}".format(code)
             except:
                 print "create index {} failed".format(code)
+
+
+@command.command()
+def download():
+    download_tick()
 
 
 if __name__ == '__main__':
