@@ -107,11 +107,10 @@ def tick():
 
 
 @command.command()
-@click.option("--bench", is_flag=True)
+@click.option("--bench", is_flag=True, help='update benchmark before update stock index')
 def update(bench):
     """
     update stock index by benchmark
-    --bench: update benchmark before update stock index
     """
     update_index(bench)
 
@@ -129,7 +128,7 @@ def write():
 
 
 @command.command()
-@click.option("--include2", is_flag=True)
+@click.option("--include2", is_flag=True, help="check all data in index")
 def emend(include2):
     """
     read db and update index
@@ -168,6 +167,7 @@ def create(path, start, end, stock_index):
 
 @command.command()
 def download():
+    """activate download listener to MQ"""
     download_tick()
 
 
