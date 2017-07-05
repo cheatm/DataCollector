@@ -104,8 +104,8 @@ class FileManger(object):
 
     # 更新股票索引
     def update_stock(self, code, benchmark):
-        stock = self.get_stock(code)
         try:
+            stock = self.get_stock(code)
             updated = self.synchronize(code, stock, benchmark)
         except Exception as e:
             return e
