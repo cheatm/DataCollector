@@ -190,5 +190,3 @@ class FileManger(object):
     def read(self, code, date, **kwargs):
         file_path = self.get_tick_path(code, date)
         return pd.read_excel(file_path, **kwargs)
-
-
