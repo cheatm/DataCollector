@@ -190,3 +190,29 @@ class FileManger(object):
     def read(self, code, date, **kwargs):
         file_path = self.get_tick_path(code, date)
         return pd.read_excel(file_path, **kwargs)
+
+    def modify(self, function, *codes):
+        if len(codes) == 0:
+            codes = self.find_stocks()
+
+        for code in codes:
+            print code,
+            try:
+                stock = self.get_stock(code)
+                new = function(stock)
+            except Exception as e:
+                print e
+                continue
+
+            self.save_csv(new, self.stock_path(code))
+            print 'success'
+
+
+def fullfill(frame):
+    frame['status'][frame['close'] == 0] = 2
+    return frame
+
+
+if __name__ == '__main__':
+    fm = FileManger(os.environ['SINADATA'])
+    fm.modify(fullfill)
