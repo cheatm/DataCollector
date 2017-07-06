@@ -140,15 +140,13 @@ from datetime import datetime
 
 
 @command.command()
-@click.option("--path")
 @click.option("--start", default='2012-06-01')
 @click.option("--end", default=datetime.now().strftime("%Y-%m-%d"))
 @click.option("--stock_index", is_flag=True)
-def create(path, start, end, stock_index):
+def create(start, end, stock_index):
     """create index dir"""
-    os.environ['SINADATA'] = path
-    os.makedirs(path+'/')
-    os.makedirs(path+'/Log/')
+    os.makedirs(root+'/')
+    os.makedirs(root+'/Log/')
     fm = FileManger(root)
     benchmark = fm.create_benchmark(start, end)
     print "create benchmark {}".format(fm.benchmark)
